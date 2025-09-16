@@ -9,7 +9,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { useState, useRef, useContext } from "react";
-import { Visibility, VisibilityOff, Watch } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { RegisterVal } from "./RegisterValitation";
@@ -19,16 +19,26 @@ import "react-toastify/dist/ReactToastify.css";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { UserRegisterContext } from "../../ContextStore/UserProfile";
 import party from "party-js";
+import SendIcon from "@mui/icons-material/Send";
 
 export default function LoginPage() {
   const navigation = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [otpSendLoading, setOtpSendLoading] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
   const fileInputRef = useRef();
   const [preview, setPreview] = useState(null);
+  // const [email, setEmail] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [otp, setOtp] = useState(new Array(6).fill(""));
+  const inputRefs = useRef([]);
+  const [oneClickVerify, setOneClickVerify] = useState(false);
+  const [EmailVerified, setEmailVerified] = useState(false);
+
   // store
-  const  {setUserProfilePic} = useContext(UserRegisterContext)
+  const { setUserProfilePic } = useContext(UserRegisterContext);
 
   const handleClickShowPassword = () => setShowPassword((prev) => !prev); //password
 
@@ -37,70 +47,165 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
     reset, // reset all filed
+    watch,
     // getValues //irukkura val va ellam yaduthutu varum
   } = useForm({
     resolver: yupResolver(RegisterVal),
   });
 
+  const handleOtpChange = (index, value) => {
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(0, 1); // Only one digit allowed
+    setOtp(newOtp);
+
+    if (value && index < inputRefs.current.length - 1) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace") {
+      const newOtp = [...otp];
+      newOtp[index] = "";
+      setOtp(newOtp);
+
+      if (index > 0) {
+        inputRefs.current[index - 1].focus();
+      }
+    }
+  };
+
+  const emailValue = watch("emailId") || "";
+  const mobileNumber = watch("userMobileNumber");
+  const isValidGmail = emailValue.trim().endsWith("@gmail.com");
   // profile pic  preview
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-       setProfilePic(file) // profile pic ku send pannurom
+      setProfilePic(file); // profile pic ku send pannurom
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result); // base64 for preview in UI
       };
       reader.readAsDataURL(file);
-     // Store the actual file for upload
-      setUserProfilePic(file)  // store file in context
+      // Store the actual file for upload
+      setUserProfilePic(file); // store file in context
     }
   };
 
   // from data submit
 
-  let handelRegisterData = async (registerData) => {
-    setIsLoading(true);
+  const handleVerify = async () => {
+    setVerifyLoading(true);
+    try {
+      const response = await axios.post(`http://localhost:8080/auth/send-otp`, {
+        email: emailValue,
+        mobileNumber: mobileNumber,
+      });
+      console.log(response);
+      if (response.status === 200) {
+        setIsVerifying(true);
+        toast.success(response.data, {
+          position: "top-right",
+        });
+      }
+      setOneClickVerify(true);
+    } catch (err) {
+      toast.error(err.response?.data, {
+        position: "top-right",
+      });
+      console.log(err);
+      setIsVerifying(false);
+      setOneClickVerify(false);
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    const otpNum = otp.join("");
+    setOtpSendLoading(true);
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/auth/verify-otp`,
+        {
+          email: emailValue,
+          otp: otpNum,
+        }
+      );
+      if (response.status === 202) {
+        setEmailVerified(true);
+      }
+      console.log(response);
+      toast.success(response.data, {
+        position: "top-right",
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data, {
+        position: "top-right",
+      });
+    } finally {
+      setOtpSendLoading(false);
+      setIsVerifying(false);
+    }
+  };
+  console.log(EmailVerified);
+
+  let handleRegisterData = async (registerData) => {
+    setSubmitLoading(true);
     try {
       const { confirmPassword, ...finalData } = registerData;
-
+      console.log(finalData);
+      const FinalDataWithEmailVerified = {
+        ...finalData,
+        isEmailVerified: EmailVerified,
+      };
+      console.log("FinalDataWithEmailVerified:", FinalDataWithEmailVerified);
       const formData = new FormData();
-      formData.append("userRegisterData", JSON.stringify(finalData)); // JSON string
+      formData.append(
+        "userRegisterData",
+        JSON.stringify(FinalDataWithEmailVerified)
+      ); // JSON string
       formData.append("profilePic", profilePic);
 
       console.log("FormData entries:");
-for (let pair of formData.entries()) {
-  console.log(pair[0], pair[1]);
-}
+      console.log(formData);
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
       const response = await axios.post(
         "http://localhost:8080/auth/new-user",
         formData
       );
-      console.log(profilePic)
+      console.log(profilePic);
       console.log("Data Added Successfully", response);
       toast.success(response.data, {
         position: "top-right",
       });
       reset();
-       party.confetti(document.body, {
-            shapes: ["circle", "square", "star"],
-            count: 150,
-            size:1,
-            spread:40,
-            position: { x: 1, y: 1 },
-          });
+      party.confetti(document.body, {
+        shapes: ["circle", "square", "star"],
+        count: 300,
+        size: 0.95,
+        spread: 40,
+        position: { x: 1, y: 1 },
+      });
       setPreview(null);
       setTimeout(() => {
         navigation("/login");
-      },4000);
+      }, 4000);
     } catch (error) {
+      console.log(error.response);
       if (error.response) {
         // Backend running but returned error (400, 401, 500, etc.)
+        console.log("first if");
         toast.error(error.response?.data || "Something went wrong ❌", {
           position: "top-right",
         });
       } else if (error.request) {
+        console.log("sec if");
         // Request sent but no response (server down or no internet)
         toast.error("Server not reachable 🚫. Please try again later.", {
           position: "top-right",
@@ -113,12 +218,14 @@ for (let pair of formData.entries()) {
       }
 
       console.error("Register Failed:", error.message);
-      reset(); // form reset
+      reset({
+        password: "", // Reset to empty
+        confirmPassword: "",
+      }); // form reset
       setPreview(null);
     } finally {
       // ❌  reset all filed
-      setIsLoading(false);
-        
+      setSubmitLoading(false);
     }
   };
 
@@ -146,7 +253,7 @@ for (let pair of formData.entries()) {
           {/* Form Fields */}
           <form
             className="grid gap-5"
-            onSubmit={handleSubmit(handelRegisterData)}
+            onSubmit={handleSubmit(handleRegisterData)}
           >
             <Box display="flex" flexDirection="column" alignItems="center">
               <input
@@ -187,16 +294,7 @@ for (let pair of formData.entries()) {
               error={!!errors.userName}
               helperText={errors.userName?.message}
             />
-            <TextField
-              fullWidth
-              label="Email / மின்னஞ்சல்"
-              type="email"
-              variant="outlined"
-              size="small"
-              {...register("emailId")}
-              error={!!errors.emailId}
-              helperText={errors.emailId?.message}
-            />
+
             <TextField
               fullWidth
               label="Mobile Number / கைபேசி எண்"
@@ -207,6 +305,71 @@ for (let pair of formData.entries()) {
               error={!!errors.userMobileNumber}
               helperText={errors.userMobileNumber?.message}
             />
+
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              {...register("emailId")}
+              error={!!errors.emailId}
+              helperText={errors.emailId?.message}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      variant="text"
+                      size="small"
+                      onClick={() => handleVerify()}
+                      disabled={
+                        !isValidGmail ||
+                        !!errors.emailId ||
+                        verifyLoading ||
+                        oneClickVerify
+                      }
+                    >
+                      {verifyLoading ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        "Verify"
+                      )}
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {isVerifying && (
+              <Box display="flex" gap={1}>
+                {otp.map((data, index) => (
+                  <TextField
+                    key={index}
+                    type="text"
+                    inputProps={{
+                      maxLength: 1,
+                      style: { textAlign: "center" },
+                    }}
+                    value={data}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    inputRef={(el) => (inputRefs.current[index] = el)}
+                    sx={{ width: "2.5rem" }}
+                    required
+                  />
+                ))}
+                <Button
+                  variant="text"
+                  endIcon={<SendIcon />}
+                  onClick={() => handleSendOtp()}
+                >
+                  {otpSendLoading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Send"
+                  )}
+                </Button>
+              </Box>
+            )}
+
             <TextField
               fullWidth
               label="Password / கடவுச்சொல்"
@@ -242,9 +405,9 @@ for (let pair of formData.entries()) {
               variant="contained"
               sx={{ mt: 2, py: 1.2, borderRadius: 2 }}
               type="submit"
-              disabled={isLoading}
+              disabled={submitLoading}
             >
-              {isLoading ? (
+              {submitLoading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
                 "Register / பதிவு செய்க"

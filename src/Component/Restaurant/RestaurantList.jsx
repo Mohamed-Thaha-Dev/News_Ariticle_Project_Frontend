@@ -47,7 +47,7 @@ const restaurants = [
 
 const RestaurantList = () => {
   return (
-    <div className="flex flex-col gap-4 mt-30">
+    <div className="flex flex-col gap-4 mt-25 mb-20">
       {restaurants.map((r) => (
         <div
           key={r.id}

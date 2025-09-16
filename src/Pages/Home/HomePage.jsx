@@ -24,21 +24,12 @@ const HomePage = () => {
   //     <HomeLoading/>
   //   )
   // }
-    const {article,isloading,error} = News()
- 
-  
-if (isloading){
-  return (
-    <HomeLoading/>
-  )
-}
- // First 4 trending news
- const trending = article.slice(0, 4);
+    
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
       {/* Trending News */}
       <div className="lg:col-span-2 space-y-6">
-        <NewsCard article = {trending}/>
+        <NewsCard/>
 
         {/* Restaurant Ad (mobile only) */}
         <div className="lg:hidden my-6">

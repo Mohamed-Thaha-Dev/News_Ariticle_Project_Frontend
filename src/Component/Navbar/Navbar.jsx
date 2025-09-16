@@ -18,12 +18,12 @@ const Navbar = () => {
           {/* Logo */}
           <img className = "w-auto h-15 max-h-30 md:w-15 md:h-15 rounded-full object-contain " src = {assects.companyLogo} />
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav
           <div className="hidden md:flex gap-8 text-lg font-medium">
             <Link to="/" className="hover:text-blue-600">Home</Link>
             <Link to="/news" className="hover:text-blue-600">News</Link>
             <Link to="/restaurant" className="hover:text-blue-600">Restaurant</Link>
-          </div>
+          </div> */}
 
           {/* Desktop Right */}
           <div className="hidden md:flex items-center gap-4">

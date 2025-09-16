@@ -26,6 +26,7 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
     watch,
+    reset
   } = useForm({
     resolver: yupResolver(LoginValidation),
   });
@@ -34,8 +35,8 @@ export default function LoginPage() {
   const password = watch("password");
 
   let handelLogin = async (loginData) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       console.log("loading");
       const response = await axios.post(
         "http://localhost:8080/auth/user-login",
@@ -52,11 +53,14 @@ export default function LoginPage() {
       toast.success("Login Successfully", { position: "top-right" });
       setTimeout(() => {
         navigation("/");
-      }, 3000);
+      }, 5000);
     } catch (err) {
+      console.log("errror message")
+      console.log(err.response?.data ||  "Something went wrong ❌" )
       toast.error(err.response?.data || "Something went wrong ❌", {
         position: "top-right",
       });
+      reset()
     } finally {
       setIsLoading(false);
     }
@@ -138,7 +142,7 @@ export default function LoginPage() {
           <div className="mt-4 text-center bg-gray-50 rounded-xl py-4">
             <p className="text-sm text-gray-600">
               Don&apos;t have an account? (கணக்கு இல்லையா?){" "}
-              <Link to="/register">
+              <Link to="/register" viewTransition>
                 <button className="ml-2 text-blue-600 hover:underline">
                   Register / பதிவு செய்யவும்
                 </button>
@@ -150,7 +154,7 @@ export default function LoginPage() {
 
       <ToastContainer
         position="top-center"
-        autoClose={2000}
+        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}
         closeOnClick
