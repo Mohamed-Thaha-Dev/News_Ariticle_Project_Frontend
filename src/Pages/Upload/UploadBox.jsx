@@ -1,11 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 
-const UploadBox = ({ onFilesSelect }) => {
+const UploadBox = ({ onFilesSelect,reset }) => {
   const [previewFiles, setPreviewFiles] = useState([]);
+    const [error, setError] = useState("");
+
+
+     useEffect(() => {
+    if (reset) {
+      setPreviewFiles([]);
+      onFilesSelect([]);
+    }
+  }, [reset, onFilesSelect]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
+      if (previewFiles.length + files.length > 3) {
+      setError("Maximum of 3 files allowed.");
+      setTimeout(() => {
+        setError("")
+      }, 4000);
+      return;
+    }
     const newPreviews = files.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
@@ -36,6 +52,10 @@ const UploadBox = ({ onFilesSelect }) => {
           onChange={handleFileChange}
         />
       </div>
+           {/* Error Message */}
+      {error && (
+        <p className="text-red-500 mt-2 text-center">{error}</p>
+      )}
 
       {/* Preview Thumbnails */}
       {previewFiles.length > 0 && (
@@ -46,7 +66,7 @@ const UploadBox = ({ onFilesSelect }) => {
                 <video
                   src={item.preview}
                   className="w-full h-full object-cover"
-                  controls
+                 
                 />
               ) : (
                 <img

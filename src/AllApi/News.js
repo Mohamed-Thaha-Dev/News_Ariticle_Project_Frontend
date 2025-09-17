@@ -1,29 +1,37 @@
-
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const News = () => {
-    let [article,setArticle] = useState([])
-    let [isloading,setIsLoading] = useState(true)
-    let [error,setError] = useState("")
+  const [article, setArticle] = useState([]);
+  const [message, setMessage] = useState("");
+  const [isloading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(()=>{
-        axios.get("http://localhost:8080/news/home")
-        .then((res)=>{
-                setArticle(res.data)
-        })
-        .catch((err)=>{
-            console.log(err)
-            setError(err.message || "Something Went Wrong")
-            setTimeout(()=>setError(""),4000)
-        })
-        .finally(()=>{
-            setIsLoading(false)
-        })
-    },[])
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/news/home");
+        console.log(response.data)
+        setMessage(response.data.message);
 
-    return{article,isloading,error}
-}
+        if (response.data.data && Array.isArray(response.data.data)) {
+          setArticle(response.data.data);
+        } else {
+          setArticle([]);
+        }
 
-export default News
+      } catch (err) {
+        console.error("API Error:", err);
+        setError(err.response?.data?.message || err.message || "Something went wrong");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  return { article, message, isloading, error };
+};
+
+export default News;

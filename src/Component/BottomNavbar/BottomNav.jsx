@@ -16,7 +16,7 @@ function BottomNavBar() {
     { name: "Account", icon: <CgProfile size={20} /> },
   ];
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-2 flex justify-around border-t">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-2 flex justify-around border">
       {navItems.map((item) => (
         <button
           key={item.name}
