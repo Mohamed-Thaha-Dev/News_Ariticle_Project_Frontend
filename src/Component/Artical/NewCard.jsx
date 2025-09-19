@@ -3,6 +3,8 @@ import News from "../../AllApi/News";
 import HomeLoading from "../HomeLoading/HomeLoading";
 import MediaCarousel from "./imageOrVedioCheck";
 import NewsCardSkeleton from "../NewsCardSkeletonLoader/NewsCardSkeletonLoader";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 //  {
 //     "newsTitle": "சென்னை நகரில் கனமான மழை",
@@ -25,14 +27,50 @@ import NewsCardSkeleton from "../NewsCardSkeletonLoader/NewsCardSkeletonLoader";
 
 const NewsCard = () => {
   const { article, isloading, error, message } = News();
-  console.log(article);
+  const [articles, setArticles] = useState([]);
+  console.log(article)
+  // console.log("this is artical id",article);
+
+
+  useEffect(() => {
+    if (Array.isArray(article)) {
+      setArticles(article); // set initial articles from API
+    }
+  }, [article]);
+
   if (isloading) {
     return <NewsCardSkeleton />;
   }
+
+  const handleLike = async (id) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:8080/news/${id}/like`,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        }
+      );
+      // update only clicked article like count
+      setArticles((prev) =>
+        prev.map((a) =>
+          a.sNo === id ? { ...a, likes: res.data.likes } : a
+        )
+      );
+      console.log("Like toggled:", res.data);
+      // TODO: update state so UI shows updated likes count
+    } catch (err) {
+      console.error("Like error:", err);
+      console.log(err.response.data)
+    }
+    console.log(article.sNo)
+  };
   return (
     <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-25 mb-20">
-      {Array.isArray(article) && article.length > 0 ? (
-        article.map((article) => (
+      {Array.isArray(articles) && articles.length > 0 ? (
+        articles.map((article,index) => (
           <motion.div
             key={article.sNo}
             className="bg-white shadow-md rounded-2xl max-h-400  overflow-hidden cursor-pointer hover:shadow-lg"
@@ -48,15 +86,16 @@ const NewsCard = () => {
             ) : (
               <div className="h-57 flex justify-center items-center">
                 <h1 className="text-center  text-gray-500">
-                Image not uploaded ❌
-              </h1>
+                  Image not uploaded ❌
+                </h1>
               </div>
-              
             )}
 
             <div className="p-4">
               <h3 className="text-xl font-bold mb-2">{article.newsTitle}</h3>
               <p className="text-gray-600 text-sm">{article.newsDescription}</p>
+
+              <button onClick={()=>handleLike(article.sNo)} className="mt-2 cursor-pointer px-4 py-1 bg-blue-500 text-white rounded-lg">Like -{article.likes}</button>
             </div>
           </motion.div>
         ))

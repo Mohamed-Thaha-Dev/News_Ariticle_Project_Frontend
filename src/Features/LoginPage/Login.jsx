@@ -18,7 +18,7 @@ import { toast, ToastContainer } from "react-toastify";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigate()
+  const navigation = useNavigate();
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
 
   let {
@@ -26,7 +26,7 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
     watch,
-    reset
+    reset,
   } = useForm({
     resolver: yupResolver(LoginValidation),
   });
@@ -35,32 +35,34 @@ export default function LoginPage() {
   const password = watch("password");
 
   let handelLogin = async (loginData) => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       console.log("loading");
       const response = await axios.post(
         "http://localhost:8080/auth/user-login",
         loginData,
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        } // withCredentials ensures refresh cookie is set if server sets it
       );
-      const token = response.data;
-      localStorage.setItem("authToken", token);
+
+      // server now returns { accessToken: "..." } (recommended)
+      // server returns { accessToken: "..." }
+      const token = response.data.accessToken || response.data;
+      localStorage.setItem("accessToken", token);
 
       toast.success("Login Successfully", { position: "top-right" });
       setTimeout(() => {
         navigation("/");
       }, 5000);
     } catch (err) {
-      console.log("errror message")
-      console.log(err.response?.data ||  "Something went wrong ❌" )
+      console.log("errror message");
+      console.log(err.response?.data || "Something went wrong ❌");
       toast.error(err.response?.data || "Something went wrong ❌", {
         position: "top-right",
       });
-      reset()
+      reset();
     } finally {
       setIsLoading(false);
     }
@@ -117,7 +119,10 @@ export default function LoginPage() {
             {/* forget_password filed */}
             <div className="text-right">
               <Link to="/forgot_password">
-                <button className="text-[12px] text-red-600 hover:underline" type="button">
+                <button
+                  className="text-[12px] text-red-600 hover:underline"
+                  type="button"
+                >
                   Forgot Password? / கடவுச்சொல் மறந்துவிட்டதா?
                 </button>
               </Link>

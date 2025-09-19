@@ -18,10 +18,11 @@ const News = () => {
           setArticle(response.data.data);
         } else {
           setArticle([]);
+          console.log("this is working")
         }
 
       } catch (err) {
-        console.error("API Error:", err);
+        console.error("API Error:", err.message);
         setError(err.response?.data?.message || err.message || "Something went wrong");
       } finally {
         setIsLoading(false);
