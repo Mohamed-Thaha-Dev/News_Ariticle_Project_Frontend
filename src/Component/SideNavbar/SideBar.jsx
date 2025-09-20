@@ -1,6 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ isOpen, onClose }) => {
   return (
@@ -25,9 +26,9 @@ const Sidebar = ({ isOpen, onClose }) => {
 
             {/* Links */}
             <div className="flex flex-col gap-4 p-4 text-lg font-medium">
-              <a href="/" className="hover:text-blue-600">Home</a>
-              <a href="/news" className="hover:text-blue-600">News</a>
-              <a href="/restaurant" className="hover:text-blue-600">Restaurant</a>
+              <Link to="/" className="hover:text-blue-600">Home</Link>
+              <Link to="/news" className="hover:text-blue-600">News</Link>
+              <Link to="/restaurant" className="hover:text-blue-600">Restaurant</Link>
 
               <input
                 type="text"
@@ -35,7 +36,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 className="px-4 py-2 rounded-lg border focus:outline-none"
               />
               <button className="px-4 py-2 bg-gray-300 rounded-lg font-semibold hover:bg-gray-400 shadow">
-                Login
+               <Link to="/login">Login</Link> 
               </button>
             </div>
           </motion.div>

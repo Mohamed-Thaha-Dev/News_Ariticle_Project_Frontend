@@ -6,7 +6,7 @@ import {
   InputAdornment,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Visibility, VisibilityOff, Watch } from "@mui/icons-material";
 import { assects } from "../../assets/Assets";
 import { set, useForm } from "react-hook-form";
@@ -14,13 +14,20 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginValidation } from "./Login";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import ReCAPTCHA from "react-google-recaptcha";
+import { loginUser } from "../../AllApi/AuthApi";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigate();
-  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const recaptchaRef = useRef();
 
+  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
+  // reCAPTCHA site key from Google
+  const SITE_KEY = "6Le3is4rAAAAADcftSKua8dCUJwU_O26NbLOmqJG";
   let {
     register,
     handleSubmit,
@@ -36,32 +43,53 @@ export default function LoginPage() {
 
   let handelLogin = async (loginData) => {
     try {
+      // If more than 3 wrong attempts → check captcha
+      if (loginAttempts >= 3) {
+        // get token from reCAPTCHA
+        const reCaptchatoken = recaptchaRef.current.getValue();
+        recaptchaRef.current.reset();
+        //  const captcha =  localStorage.getItem("_grecaptcha")
+
+        if (!reCaptchatoken) {
+          toast.error("Please verify reCAPTCHA ❌");
+          return;
+        }
+
+        // attach token to loginData object (field name must match backend DTO)
+        loginData.captchaResponse = reCaptchatoken;
+      }
       setIsLoading(true);
       console.log("loading");
-      const response = await axios.post(
-        "http://localhost:8080/auth/user-login",
-        loginData,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        } // withCredentials ensures refresh cookie is set if server sets it
-      );
-
+      console.log(loginAttempts);
+      // const response = await axios.post(
+      //   "http://localhost:8080/auth/user-login",
+      //   loginData,
+      //   {
+      //     headers: { "Content-Type": "application/json" },
+      //     withCredentials: true,
+      //   } // withCredentials ensures refresh cookie is set if server sets it
+      // );
+      const response = await loginUser(loginData);
       // server now returns { accessToken: "..." } (recommended)
       // server returns { accessToken: "..." }
       const token = response.data.accessToken || response.data;
       localStorage.setItem("accessToken", token);
-
+      // Reset login attempts after success
+      setLoginAttempts(0);
       toast.success("Login Successfully", { position: "top-right" });
       setTimeout(() => {
         navigation("/");
       }, 5000);
     } catch (err) {
-      console.log("errror message");
-      console.log(err.response?.data || "Something went wrong ❌");
+      console.log("err", err);
+      console.log("errror message", err.response);
+      console.log(err.response || "Something went wrong ❌");
       toast.error(err.response?.data || "Something went wrong ❌", {
         position: "top-right",
       });
+      console.log(loginAttempts);
+      // ⬇️ Increase loginAttempts after failure
+      setLoginAttempts((prev) => prev + 1);
       reset();
     } finally {
       setIsLoading(false);
@@ -116,6 +144,20 @@ export default function LoginPage() {
                 ),
               }}
             />
+
+            {loginAttempts >= 3 && (
+              <div className="flex justify-center ">
+                <ReCAPTCHA
+                  sitekey={SITE_KEY}
+                  ref={recaptchaRef}
+                  onChange={(token) => {
+                    console.log("Token from recaptcha:", token);
+                    setCaptchaVerified(true);
+                  }}
+                  onExpired={() => setCaptchaVerified(false)}
+                />
+              </div>
+            )}
             {/* forget_password filed */}
             <div className="text-right">
               <Link to="/forgot_password">

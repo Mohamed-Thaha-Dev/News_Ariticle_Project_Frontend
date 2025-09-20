@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { Watch } from "lucide-react";
 import { ResetPasswordValidation } from "./ResetPasswordValitation";
 import { useNavigate } from "react-router-dom";
+import { resetPassword } from "../../AllApi/AuthApi";
 
 export default function ResetPasswordPage() {
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -59,13 +60,15 @@ export default function ResetPasswordPage() {
     // Send OTP + New Password API call logic here
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/auth/forget-password/reset",
-        {
-          resetToken,
-          newPassword,
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:8080/auth/forget-password/reset",
+      //   {
+      //     resetToken,
+      //     newPassword,
+      //   }
+      // );
+
+      const response = await resetPassword(newPassword,resetToken)
 
       console.log(response.data);
       toast.success(response?.data || "OTP submitted successfully!", {

@@ -20,6 +20,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { UserRegisterContext } from "../../ContextStore/UserProfile";
 import party from "party-js";
 import SendIcon from "@mui/icons-material/Send";
+import {registerUser, sendOtp, verifyOtp } from "../../AllApi/AuthApi";
 
 export default function LoginPage() {
   const navigation = useNavigate();
@@ -96,13 +97,14 @@ export default function LoginPage() {
 
   // from data submit
 
-  const handleVerify = async () => {
+  const handleSendOtp = async () => {
     setVerifyLoading(true);
     try {
-      const response = await axios.post(`http://localhost:8080/auth/send-otp`, {
-        email: emailValue,
-        mobileNumber: mobileNumber,
-      });
+      const response = await sendOtp(emailValue,mobileNumber)
+      // const response = await axios.post(`http://localhost:8080/auth/send-otp`, {
+      //   email: emailValue,
+      //   mobileNumber: mobileNumber,
+      // });
       console.log(response);
       if (response.status === 200) {
         setIsVerifying(true);
@@ -123,17 +125,11 @@ export default function LoginPage() {
     }
   };
 
-  const handleSendOtp = async () => {
+  const handleVerifyOtp = async () => {
     const otpNum = otp.join("");
     setOtpSendLoading(true);
     try {
-      const response = await axios.post(
-        `http://localhost:8080/auth/verify-otp`,
-        {
-          email: emailValue,
-          otp: otpNum,
-        }
-      );
+      const response = await verifyOtp(emailValue,otpNum);
       if (response.status === 202) {
         setEmailVerified(true);
       }
@@ -146,6 +142,7 @@ export default function LoginPage() {
       toast.error(err.response?.data, {
         position: "top-right",
       });
+      setOneClickVerify(false)
     } finally {
       setOtpSendLoading(false);
       setIsVerifying(false);
@@ -157,28 +154,29 @@ export default function LoginPage() {
     setSubmitLoading(true);
     try {
       const { confirmPassword, ...finalData } = registerData;
-      console.log(finalData);
+      // console.log(finalData);
       const FinalDataWithEmailVerified = {
         ...finalData,
         isEmailVerified: EmailVerified,
       };
-      console.log("FinalDataWithEmailVerified:", FinalDataWithEmailVerified);
-      const formData = new FormData();
-      formData.append(
-        "userRegisterData",
-        JSON.stringify(FinalDataWithEmailVerified)
-      ); // JSON string
-      formData.append("profilePic", profilePic);
+      // console.log("FinalDataWithEmailVerified:", FinalDataWithEmailVerified);
+      // const formData = new FormData();
+      // formData.append(
+      //   "userRegisterData",
+      //   JSON.stringify(FinalDataWithEmailVerified)
+      // ); // JSON string
+      // formData.append("profilePic", profilePic);
 
-      console.log("FormData entries:");
-      console.log(formData);
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-      const response = await axios.post(
-        "http://localhost:8080/auth/new-user",
-        formData
-      );
+      // console.log("FormData entries:");
+      // console.log(formData);
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0], pair[1]);
+      // }
+      const response = await registerUser(FinalDataWithEmailVerified,profilePic)
+      // const response = await axios.post(
+      //   "http://localhost:8080/auth/new-user",
+      //   formData
+      // );
       console.log(profilePic);
       console.log("Data Added Successfully", response);
       toast.success(response.data, {
@@ -319,7 +317,7 @@ export default function LoginPage() {
                     <Button
                       variant="text"
                       size="small"
-                      onClick={() => handleVerify()}
+                      onClick={() => handleSendOtp()}
                       disabled={
                         !isValidGmail ||
                         !!errors.emailId ||
@@ -358,8 +356,8 @@ export default function LoginPage() {
                 ))}
                 <Button
                   variant="text"
-                  endIcon={<SendIcon />}
-                  onClick={() => handleSendOtp()}
+                  endIcon={<SendIcon/>}
+                  onClick={() => handleVerifyOtp()}
                 >
                   {otpSendLoading ? (
                     <CircularProgress size={24} color="inherit" />
@@ -431,7 +429,7 @@ export default function LoginPage() {
 
       <ToastContainer
         position="top-center"
-        autoClose={3000}
+        autoClose={8000}
         hideProgressBar={false}
         newestOnTop={true}
         closeOnClick

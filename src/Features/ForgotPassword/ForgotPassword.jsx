@@ -3,6 +3,7 @@ import { TextField, Button, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import {ToastContainer,toast} from "react-toastify"
+import { forgotPassword } from "../../AllApi/AuthApi";
 
 const ForgotPassword = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
@@ -19,9 +20,10 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/auth/forget-password/request",{emailOrPhone }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:8080/auth/forget-password/request",{emailOrPhone }
+      // );
+      const response = await forgotPassword(emailOrPhone)
       console.log(response.data)
       toast.success(response?.data || "Password reset link sent!",{
         position:"top-right"

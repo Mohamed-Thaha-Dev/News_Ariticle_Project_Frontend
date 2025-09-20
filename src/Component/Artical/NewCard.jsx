@@ -5,6 +5,12 @@ import MediaCarousel from "./imageOrVedioCheck";
 import NewsCardSkeleton from "../NewsCardSkeletonLoader/NewsCardSkeletonLoader";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { likeOnClick } from "../../AllApi/newApi";
+import Checkbox from "@mui/material/Checkbox";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import Favorite from "@mui/icons-material/Favorite";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 //  {
 //     "newsTitle": "சென்னை நகரில் கனமான மழை",
@@ -28,9 +34,15 @@ import { useEffect, useState } from "react";
 const NewsCard = () => {
   const { article, isloading, error, message } = News();
   const [articles, setArticles] = useState([]);
-  console.log(article)
-  // console.log("this is artical id",article);
+  const navigate = useNavigate()
+  // add variable
 
+  // const [article, setArticle] = useState([]);
+  // const [message, setMessage] = useState("");
+  // const [isloading, setIsLoading] = useState(true);
+  // const [error, setError] = useState(null);
+  console.log(article);
+  // console.log("this is artical id",article);
 
   useEffect(() => {
     if (Array.isArray(article)) {
@@ -44,73 +56,108 @@ const NewsCard = () => {
 
   const handleLike = async (id) => {
     try {
-      const res = await axios.patch(
-        `http://localhost:8080/news/${id}/like`,
-        {},
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("accessToken"),
-          },
-        }
-      );
+      // const res = await axios.patch(
+      //   `http://localhost:8080/news/${id}/like`,
+      //   {},
+      //   {
+      //     headers: {
+      //       Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      //     },
+      //   }
+      // );
+      const response = await likeOnClick(id);
       // update only clicked article like count
       setArticles((prev) =>
         prev.map((a) =>
-          a.sNo === id ? { ...a, likes: res.data.likes } : a
+          a.sNo === id ? { ...a, likes: response.data.likes } : a
         )
       );
-      console.log("Like toggled:", res.data);
+      toast.success(response.data, {
+        position: "top-right",
+      });
+      console.log("Like toggled:", response.data);
       // TODO: update state so UI shows updated likes count
     } catch (err) {
+      console.log(err)
+      if(err.response?.status === 403 || err.response?.status === 401){
+        setTimeout(() => {
+          navigate("/login")
+        }, 5000);
+      }
+      toast.error(err.response?.data?.message, {
+        position: "top-right",
+      });
       console.error("Like error:", err);
-      console.log(err.response.data)
+      console.log(err.response.data?.message);
     }
-    console.log(article.sNo)
+    console.log(article.sNo);
   };
   return (
-    <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-25 mb-20">
-      {Array.isArray(articles) && articles.length > 0 ? (
-        articles.map((article,index) => (
-          <motion.div
-            key={article.sNo}
-            className="bg-white shadow-md rounded-2xl max-h-400  overflow-hidden cursor-pointer hover:shadow-lg"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-          >
-            {/* Show Image or Video */}
-            {article.imageOrVideoUrl && article.imageOrVideoUrl.length > 0 ? (
-              <MediaCarousel mediaUrl={article.imageOrVideoUrl} />
-            ) : (
-              <div className="h-57 flex justify-center items-center">
-                <h1 className="text-center  text-gray-500">
-                  Image not uploaded ❌
-                </h1>
+    <>
+      <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-25 mb-20">
+        {Array.isArray(articles) && articles.length > 0 ? (
+          articles.map((article, index) => (
+            <motion.div
+              key={article.sNo}
+              className="bg-white shadow-md rounded-2xl max-h-400  overflow-hidden cursor-pointer hover:shadow-lg"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            >
+              {/* Show Image or Video */}
+              {article.imageOrVideoUrl && article.imageOrVideoUrl.length > 0 ? (
+                <MediaCarousel mediaUrl={article.imageOrVideoUrl} />
+              ) : (
+                <div className="h-57 flex justify-center items-center">
+                  <h1 className="text-center  text-gray-500">
+                    Image not uploaded ❌
+                  </h1>
+                </div>
+              )}
+
+              <div className="p-4">
+                <h3 className="text-xl font-bold mb-2">{article.newsTitle}</h3>
+                <p className="text-gray-600 text-sm">
+                  {article.newsDescription}
+                </p>
+                {/* Like Checkbox */}
+                <div className="flex items-center space-x-2 mt-2">
+                  <Checkbox
+                    icon={<Favorite />} // White heart (unliked)
+                    checkedIcon={<Favorite sx={{ color: "red" }} />} // Red heart (liked)
+                    checked={article.likes > 0}
+                    onChange={() => handleLike(article.sNo)}
+                  />
+
+                  <span>{article.likes}</span>
+                </div>
               </div>
-            )}
+            </motion.div>
+          ))
+        ) : (
+          <div className="text-center text-gray-500 mt-10">
+            {message || "No news available 😔"}
+          </div>
+        )}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <strong className="font-bold">Oops! </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+      </div>
 
-            <div className="p-4">
-              <h3 className="text-xl font-bold mb-2">{article.newsTitle}</h3>
-              <p className="text-gray-600 text-sm">{article.newsDescription}</p>
-
-              <button onClick={()=>handleLike(article.sNo)} className="mt-2 cursor-pointer px-4 py-1 bg-blue-500 text-white rounded-lg">Like -{article.likes}</button>
-            </div>
-          </motion.div>
-        ))
-      ) : (
-        <div className="text-center text-gray-500 mt-10">
-          {message || "No news available 😔"}
-        </div>
-      )}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-          <strong className="font-bold">Oops! </strong>
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-    </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+      />
+    </>
   );
 };
 
