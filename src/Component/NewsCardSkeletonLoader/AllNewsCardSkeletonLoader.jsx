@@ -1,11 +1,11 @@
-import React from 'react';
+import React from 'react'
 import { Skeleton, Card, CardContent } from '@mui/material';
 
-const NewsCardSkeleton = () => {
+const AllNewsCardSkeletonLoader = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-25 mb-20">
-      {[1, 2, 3,4].map((item) => (
-        <Card key={item} className="p-4 shadow-md rounded-2xl">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-25 mb-20">
+      {[1, 2, 3,4,5,6].map((item) => (
+        <Card key={item} className="p-4 shadow-2xl rounded-2xl">
           <Skeleton variant="rectangular" width="100%" height={200} className="mb-4" />
           <CardContent>
             <Skeleton variant="text" width="60%" height={40} className="mb-2" />
@@ -16,7 +16,7 @@ const NewsCardSkeleton = () => {
         </Card>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default NewsCardSkeleton;
+export default AllNewsCardSkeletonLoader

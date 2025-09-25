@@ -22,7 +22,7 @@ import party from "party-js";
 import SendIcon from "@mui/icons-material/Send";
 import {registerUser, sendOtp, verifyOtp } from "../../AllApi/AuthApi";
 
-export default function LoginPage() {
+export default function Register() {
   const navigation = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -180,7 +180,7 @@ export default function LoginPage() {
       console.log(profilePic);
       console.log("Data Added Successfully", response);
       toast.success(response.data, {
-        position: "top-right",
+        position: "top-center",
       });
       reset();
       party.confetti(document.body, {
@@ -229,8 +229,8 @@ export default function LoginPage() {
 
   return (
     <>
-      <section className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
-        <div className="md:w-[95%] max-w-md md:bg-white md:rounded-2xl md:shadow-lg p-10 sm:p-8 relative z-10 mt-15 md:mt-25">
+      <section className="flex min-h-screen  md:bg-blue-100 bg-white items-center justify-center bg-gray-100 px-4">
+        <div className="md:w-[95%] max-w-md md:bg-white md:rounded-2xl md:shadow-lg  sm:p-8 relative z-10 mt-15 md:mt-25 md:mb-10 mt-0 ">
           {/* Header */}
           <div className="mb-6 text-center">
             <h3 className="text-2xl font-semibold sm:text-3xl">
@@ -358,6 +358,7 @@ export default function LoginPage() {
                   variant="text"
                   endIcon={<SendIcon/>}
                   onClick={() => handleVerifyOtp()}
+                  disabled = {!otp}
                 >
                   {otpSendLoading ? (
                     <CircularProgress size={24} color="inherit" />

@@ -13,17 +13,19 @@ const Navbar = () => {
   return (
     <>
       {/* Navbar */}
-      <nav className="bg-gray-200 py-4 shadow fixed top-0 left-0 right-0 z-50">
+      <nav className="bg-gray-200 py-4 shadow fixed top-0 left-0 right-0 z-50 rounded">
         <div className="container mx-auto flex items-center justify-between px-4 max-h-10">
           {/* Logo */}
           <img className = "w-auto h-15 max-h-30 md:w-15 md:h-15 rounded-full object-contain " src = {assects.companyLogo} />
 
-          {/* Desktop Nav
+          {/* Desktop Nav */}
           <div className="hidden md:flex gap-8 text-lg font-medium">
             <Link to="/" className="hover:text-blue-600">Home</Link>
-            <Link to="/news" className="hover:text-blue-600">News</Link>
             <Link to="/restaurant" className="hover:text-blue-600">Restaurant</Link>
-          </div> */}
+            <Link to="/upload" className="hover:text-blue-600">Upload</Link>
+            <Link to="/restaurant" className="hover:text-blue-600">Notifications</Link>
+            <Link to="/restaurant" className="hover:text-blue-600">Account</Link>
+          </div>
 
           {/* Desktop Right */}
           <div className="hidden md:flex items-center gap-4">

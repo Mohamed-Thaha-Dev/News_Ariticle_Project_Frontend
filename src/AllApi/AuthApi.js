@@ -1,4 +1,5 @@
 import axios from "axios"
+import axiosInstance from "../Features/LoginPage/userLoginToken"
 
 
 export const baseURL = "http://localhost:8080"
@@ -32,7 +33,7 @@ export const registerUser = async (finalData, profilePic)=>{
 // userLogin
 export const loginUser = async (loginData) => {
     console.log("logindata",loginData)
-  return await axios.post(`${baseURL}/auth/user-login`, loginData, {
+  return await axiosInstance.post(`${baseURL}/auth/user-login`, loginData, {
     headers: { "Content-Type": "application/json" },
     withCredentials: true,
 

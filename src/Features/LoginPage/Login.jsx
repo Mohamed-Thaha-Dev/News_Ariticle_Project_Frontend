@@ -6,24 +6,27 @@ import {
   InputAdornment,
   CircularProgress,
 } from "@mui/material";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Visibility, VisibilityOff, Watch } from "@mui/icons-material";
 import { assects } from "../../assets/Assets";
 import { set, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { LoginValidation } from "./Login";
+import { LoginValidation } from "./LoginValitation";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import ReCAPTCHA from "react-google-recaptcha";
 import { loginUser } from "../../AllApi/AuthApi";
+import { LoginContext, LoginProvider } from "../../ContextStore/UserProfile";
 
-export default function LoginPage() {
+const LoginPage = ()=> {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  // const [login,setLogin] = useState(false)
   const navigation = useNavigate();
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const recaptchaRef = useRef();
+  const {setLogin} = useContext(LoginContext)
 
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   // reCAPTCHA site key from Google
@@ -75,10 +78,11 @@ export default function LoginPage() {
       const token = response.data.accessToken || response.data;
       localStorage.setItem("accessToken", token);
       // Reset login attempts after success
+      setLogin(true)
       setLoginAttempts(0);
       toast.success("Login Successfully", { position: "top-right" });
       setTimeout(() => {
-        navigation("/");
+        navigation("/allNews");
       }, 5000);
     } catch (err) {
       console.log("err", err);
@@ -91,6 +95,7 @@ export default function LoginPage() {
       // ⬇️ Increase loginAttempts after failure
       setLoginAttempts((prev) => prev + 1);
       reset();
+      // setLogin(false)
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +103,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <section className="flex min-h-screen items-center justify-center bg-gray-100 px-4 pt-15 sm:pt-24">
+      <section className="flex min-h-screen md:bg-blue-100 bg-white items-center justify-center px-4 pt-15 sm:pt-24">
         <div className="md:w-[95%] max-w-md md:bg-white md:rounded-2xl md:shadow-lg p-6 sm:p-8">
           {/* Header */}
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -162,7 +167,7 @@ export default function LoginPage() {
             <div className="text-right">
               <Link to="/forgot_password">
                 <button
-                  className="text-[12px] text-red-600 hover:underline"
+                  className="text-[12px] text-blue-600 hover:underline"
                   type="button"
                 >
                   Forgot Password? / கடவுச்சொல் மறந்துவிட்டதா?
@@ -210,3 +215,4 @@ export default function LoginPage() {
     </>
   );
 }
+export default LoginPage

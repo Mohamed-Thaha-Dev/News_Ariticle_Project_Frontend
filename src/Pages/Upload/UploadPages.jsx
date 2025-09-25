@@ -78,7 +78,7 @@ const UploadPage = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + localStorage.getItem("authToken"), // or sessionStorage
+            Authorization: "Bearer " + localStorage.getItem("accessToken"), // or sessionStorage
           },
         }
       );
@@ -118,7 +118,7 @@ const UploadPage = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="max-w-[90%] mx-auto md:shadow-lg p-6 grid  grid-cols-1 sm:grid-cols-2 gap-6 mt-20 mb-20"
+        className="max-w-[90%] mx-auto md:shadow-lg p-6 grid  grid-cols-1 sm:grid-cols-2 gap-6 mt-30 mb-20 pb-24"
       >
         {/* Upload Box */}
         <div className="md:ml-20 ml-0 ">
@@ -131,7 +131,7 @@ const UploadPage = () => {
         {/* Text Fields */}
         <div className="grid gap-4">
           <TextField
-            label="News Title"
+            placeholder="News Title"
             variant="outlined"
             fullWidth
             name="newsTitle"
@@ -157,7 +157,7 @@ const UploadPage = () => {
           />
 
           <TextField
-            label="Category"
+            placeholder="Category"
             variant="outlined"
             fullWidth
             name="category"
@@ -167,7 +167,8 @@ const UploadPage = () => {
           />
 
           <TextField
-            label="Tags (comma separated)"
+            placeholder="Tags (comma separated)"
+            
             variant="outlined"
             fullWidth
             name="tags"

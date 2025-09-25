@@ -16,13 +16,12 @@ function BottomNavBar() {
     { name: "Account", icon: <CgProfile size={20} /> },
   ];
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-2 flex justify-around border">
+    <nav className="fixed bottom-0 md:hidden lg:hidden left-0 right-0 bg-white shadow-lg p-2 flex justify-around border">
       {navItems.map((item) => (
         <button
           key={item.name}
           onClick={() => {
             setActiveTab(item.name);
-
             switch (item.name) {
               case "Home":
                 navigate("/");

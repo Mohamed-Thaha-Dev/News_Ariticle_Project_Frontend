@@ -6,7 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import HomePage from "../Pages/Home/HomePage";
-import News from "../Pages/News/News";
+
 import Restaurant from "../Pages/Restaurant/Restaurant";
 import Login from "../Features/LoginPage/Login.jsx";
 import Register from "../Features/Register/Register";
@@ -19,12 +19,17 @@ import BottomNavBar from "../Component/BottomNavbar/BottomNav.jsx";
 import RestaurantList from "../Component/Restaurant/RestaurantList.jsx";
 import UploadPage from "../Pages/Upload/UploadPages.jsx";
 import PageNotFound from "../Component/PageNoteFound/PageNotFound.jsx";
+import { useState } from "react";
+import AllNews from "../Pages/News/AllNewsPage.jsx";
+import AllNewsPage from "../Pages/News/AllNewsPage.jsx";
+import UserLogin from "../Pages/LoginPages/UserLogin.jsx";
+import { RegisterPage } from "../Pages/RegisterPage/RegisterPage.jsx";
 
 const AnimateRouters = () => {
   const location = useLocation();
   const hideNavbarPaths = ['/login', '/register', '/forgot_password', '/reset_password',"*"];
   const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
-
+  const [login, setLogin] = useState(false);
   return (
     <>
       <Navbar />
@@ -41,12 +46,12 @@ const AnimateRouters = () => {
                   exit={{ opacity: 0, x: 50 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <HomePage />
+                  <HomePage login = {login} />
                 </motion.div>
               }
             />
             <Route
-              path="/news"
+              path="/allNews"
               element={
                 <motion.div
                   initial={{ opacity: 0, x: 50 }}
@@ -54,7 +59,7 @@ const AnimateRouters = () => {
                   exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <News />
+                  <AllNewsPage/>
                 </motion.div>
               }
             />
@@ -80,7 +85,7 @@ const AnimateRouters = () => {
                   exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <Login />
+                  <UserLogin/>
                 </motion.div>
               }
             />
@@ -93,7 +98,7 @@ const AnimateRouters = () => {
                   exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <Register />
+                  <RegisterPage/>
                 </motion.div>
               }
             />
