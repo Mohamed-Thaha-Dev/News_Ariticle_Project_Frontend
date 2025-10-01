@@ -13,9 +13,7 @@ import { FormHelperText } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-
-
-
+import axiosInstance from "../../Features/LoginPage/userLoginToken";
 
 const UploadPage = () => {
   const [mediaFile, setMediaFile] = useState([]);
@@ -33,32 +31,42 @@ const UploadPage = () => {
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (name === "status") {
-      setFormData((prev) => ({ ...prev, status: checked }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]:
-          type === "checkbox" ? checked : type === "file" ? files[0] : value,
-      }));
-    }
-  };
+const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  if (name === "status") {
+    setFormData((prev) => ({ ...prev, status: checked }));
+  } else if (name === "tags") {
+    setFormData((prev) => ({
+      ...prev,
+      tags: value ? value.split(",").map((tag) => tag.trim()) : [],
+    }));
+  } else {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
 
+  if (mediaFile.length > 0) {
     mediaFile.forEach((file) => {
-      formData.append("file", file); // Note: use same key name as your backend expects
+      formData.append("file", file);
     });
+  } else {
+    // 🚀 send empty file array so backend doesn’t crash
+    formData.append("file", new Blob([]), "");
+  }
 
     const fixedUploadData = {
       newsTitle: uploadData.newsTitle,
       newsDescription: uploadData.newsDescription,
       category: uploadData.category,
-      tags: uploadData.tags.split(",").map((tag) => tag.trim()),
+      tags: uploadData.tags,
       status: uploadData.status ? "DRAFT" : "PUBLISHED", // ENUM string
     };
     // formData.append("file", mediaFile);
@@ -72,7 +80,7 @@ const UploadPage = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://localhost:8080/news/upload",
         formData,
         {
@@ -89,7 +97,7 @@ const UploadPage = () => {
         newsTitle: "",
         newsDescription: "",
         category: "",
-        tags: [],
+        tags:[],
         status: false, // false = Published, true = Draft (UI toggle)
         termsAccepted: false,
       });
@@ -118,7 +126,7 @@ const UploadPage = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="max-w-[90%] mx-auto md:shadow-lg p-6 grid  grid-cols-1 sm:grid-cols-2 gap-6 mt-30 mb-20 pb-24"
+        className="max-w-[85%] mx-auto md:shadow-lg p-6 grid grid-cols-1 sm:grid-cols-2 gap-6 mt-30 mb-20 pb-24"
       >
         {/* Upload Box */}
         <div className="md:ml-20 ml-0 ">
@@ -149,13 +157,19 @@ const UploadPage = () => {
             placeholder="News Description"
             value={uploadData.newsDescription}
             onChange={handleChange}
+            minLength={100} // ✅ direct HTML attribute
+            // helperText={`${uploadData.newsDescription.length}/100 characters`}
             name="newsDescription"
             className="w-full p-3 border rounded"
             minRows={5}
             maxRows={6}
             required
           />
-
+          <small className="text-right text-gray-600">
+            {uploadData.newsDescription.length < 100
+              ? "Min 100 characters"
+              : ""}
+          </small>
           <TextField
             placeholder="Category"
             variant="outlined"
@@ -168,7 +182,6 @@ const UploadPage = () => {
 
           <TextField
             placeholder="Tags (comma separated)"
-            
             variant="outlined"
             fullWidth
             name="tags"

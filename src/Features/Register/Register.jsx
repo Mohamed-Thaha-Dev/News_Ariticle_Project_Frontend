@@ -229,8 +229,8 @@ export default function Register() {
 
   return (
     <>
-      <section className="flex min-h-screen  md:bg-blue-100 bg-white items-center justify-center bg-gray-100 px-4">
-        <div className="md:w-[95%] max-w-md md:bg-white md:rounded-2xl md:shadow-lg  sm:p-8 relative z-10 mt-15 md:mt-25 md:mb-10 mt-0 ">
+      <section className="flex min-h-screen  md:bg-blue-100 items-center justify-center bg-gray-100 px-4">
+        <div className="md:w-[95%] max-w-md md:bg-white md:rounded-2xl md:shadow-lg  sm:p-8 relative z-10 mt-10 md:mt-25 md:mb-10">
           {/* Header */}
           <div className="mb-6 text-center">
             <h3 className="text-2xl font-semibold sm:text-3xl">
@@ -356,7 +356,8 @@ export default function Register() {
                 ))}
                 <Button
                   variant="text"
-                  endIcon={<SendIcon/>}
+                   endIcon={otpSendLoading ? null : <SendIcon />}
+                   
                   onClick={() => handleVerifyOtp()}
                   disabled = {!otp}
                 >

@@ -83,7 +83,7 @@ const LoginPage = ()=> {
       toast.success("Login Successfully", { position: "top-right" });
       setTimeout(() => {
         navigation("/allNews");
-      }, 5000);
+      },2000);
     } catch (err) {
       console.log("err", err);
       console.log("errror message", err.response);
@@ -103,7 +103,7 @@ const LoginPage = ()=> {
 
   return (
     <>
-      <section className="flex min-h-screen md:bg-blue-100 bg-white items-center justify-center px-4 pt-15 sm:pt-24">
+      <section className="flex min-h-screen md:bg-blue-100 bg-white items-center justify-center px-4 sm:pt-24">
         <div className="md:w-[95%] max-w-md md:bg-white md:rounded-2xl md:shadow-lg p-6 sm:p-8">
           {/* Header */}
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">

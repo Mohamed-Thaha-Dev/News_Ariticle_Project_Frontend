@@ -7,7 +7,6 @@ import { assects } from "../../assets/Assets";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   let Navigate = useNavigate()
 
   return (
@@ -19,21 +18,42 @@ const Navbar = () => {
           <img className = "w-auto h-15 max-h-30 md:w-15 md:h-15 rounded-full object-contain " src = {assects.companyLogo} />
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex gap-8 text-lg font-medium">
-            <Link to="/" className="hover:text-blue-600">Home</Link>
-            <Link to="/restaurant" className="hover:text-blue-600">Restaurant</Link>
-            <Link to="/upload" className="hover:text-blue-600">Upload</Link>
-            <Link to="/restaurant" className="hover:text-blue-600">Notifications</Link>
-            <Link to="/restaurant" className="hover:text-blue-600">Account</Link>
-          </div>
+       <div className="hidden md:flex gap-8 text-lg text-black font-medium">
+  <Link 
+    to="/" 
+    className="px-3 py-2 rounded hover:bg-blue-600 hover:text-white transition-all duration-300"
+  >
+    Home
+  </Link>
+  <Link 
+    to="/restaurant" 
+    className="px-3 py-2 rounded hover:bg-blue-600 hover:text-white transition-all duration-300"
+  >
+    Restaurant
+  </Link>
+  <Link 
+    to="/upload" 
+    className="px-3 py-2 rounded hover:bg-blue-600 hover:text-white transition-all duration-300"
+  >
+    Upload
+  </Link>
+  <Link 
+    to="/restaurant" 
+    className="px-3 py-2 rounded hover:bg-blue-600 hover:text-white transition-all duration-300"
+  >
+    Notifications
+  </Link>
+  <Link 
+    to="/restaurant" 
+    className="px-3 py-2 rounded hover:bg-blue-600 hover:text-white transition-all duration-300"
+  >
+    Account
+  </Link>
+</div>
+
 
           {/* Desktop Right */}
           <div className="hidden md:flex items-center gap-4">
-            <input
-              type="text"
-              placeholder="Search Yours"
-              className="px-4 py-2 rounded-lg border focus:outline-none"
-            />
             <button className="px-4 py-2 bg-green-500 rounded-lg font-semibold hover:bg-gray-400 shadow" onClick={()=>Navigate("/login")} >
               Login
             </button>

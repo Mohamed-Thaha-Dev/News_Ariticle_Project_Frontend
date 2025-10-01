@@ -16,7 +16,7 @@ const allNewsPage = ()=>{
         const response = await axiosInstance.get(`${baseURL}/news/all`,{
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: "Bearer" + localStorage.getItem("accessToken"), // or sessionStorage
+            Authorization: "Bearer " + localStorage.getItem("accessToken"), // or sessionStorage
           },
         });
         console.log(response.data)
@@ -41,7 +41,7 @@ const allNewsPage = ()=>{
   }, []);
 
 
-return {allNews,allNewMessage,allNewsIsLoading,allNewsError}
+return {allNews,allNewMessage,allNewsIsLoading,allNewsError,setAllNewsError}
 
 
 }

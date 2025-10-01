@@ -24,7 +24,7 @@ const headers = token ? { Authorization: `Bearer ${token}` } : {};
         //     "Content-Type": "multipart/form-data",
         //     Authorization: "Bearer " + localStorage.getItem("accessToken"), // or sessionStorage
         //   }})
-        const response = await axiosInstance.get(`${baseURL}/news/home`,{headers});
+        const response = await axios.get(`${baseURL}/news/home`);
         console.log(response.data)
         setMessage(response.data.message);
         if (response.data.data && Array.isArray(response.data.data)) {

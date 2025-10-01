@@ -1,20 +1,15 @@
 import { motion } from "framer-motion";
 import News from "../../AllApi/News";
-import HomeLoading from "../HomeLoading/HomeLoading";
-import MediaCarousel from "./imageOrVedioCheck";
+
 import NewsCardSkeleton from "../NewsCardSkeletonLoader/NewsCardSkeletonLoader";
-import axios from "axios";
+
 import { useContext, useEffect, useState } from "react";
 import { likeOnClick, unlikeOnClick } from "../../AllApi/newApi";
-import Checkbox from "@mui/material/Checkbox";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import Favorite from "@mui/icons-material/Favorite";
+
 import { toast, ToastContainer } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginContext, LoginProvider } from "../../ContextStore/UserProfile";
-import NewsDescription from "./NewsDescription";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import NewsItem from "../AllNews/NewsItem";
 
 //  {
 //     "newsTitle": "சென்னை நகரில் கனமான மழை",
@@ -40,6 +35,7 @@ const NewsCard = () => {
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
   const { login } = useContext(LoginContext);
+
   // add variable
 
   // const [article, setArticle] = useState([]);
@@ -161,77 +157,17 @@ const NewsCard = () => {
   };
   return (
     <>
-      <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-25">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-20 md:mt-25 items-stretch">
         {Array.isArray(articles) && articles.length > 0 ? (
           articles.map((article, index) => (
-            <motion.div
-              key={article.sNo}
-              className="bg-white shadow-md rounded-2xl max-h-400  overflow-hidden cursor-pointer hover:shadow-lg"
-              whileHover={{ scale: 1.03 }}
-              // whileTap={{ scale: 0.97 }}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            >
-              {/* Show Image or Video */}
-              {article.imageOrVideoUrl && article.imageOrVideoUrl.length > 0 ? (
-                <MediaCarousel mediaUrl={article.imageOrVideoUrl} />
-              ) : (
-                <div className="h-57 flex justify-center items-center">
-                  <h1 className="text-center  text-gray-500">
-                    Image not uploaded ❌
-                  </h1>
-                </div>
-              )}
+           
+  <NewsItem
+    key={article.sNo}
+    article={article}
+    handleLike={handleLike}
+    handleUnLike={handleUnLike}
+  />
 
-              <div className="p-4">
-                <h3 className="text-xl font-bold mb-2">{article.newsTitle}</h3>
-                {/* description with see more/less */}
-                <NewsDescription text={article.newsDescription} />
-
-                {/* Like Checkbox */}
-                {/* <div className="flex items-center space-x-2 mt-2">
-                  <Checkbox
-                    icon={<Favorite />} // White heart (unliked)
-                    checkedIcon={<Favorite sx={{ color: "red" }} />} // Red heart (liked)
-                    checked={Boolean(article.likedByCurrentUser)}
-                    onChange={() => handleLike(article.sNo)}
-                  />
-                  <span>{article.likes}</span>
-                </div> */}
-
-                {/* like / unlike / views row */}
-                <div className="flex items-center justify-between mt-3">
-                  {/* Like */}
-                  <div className="flex items-center space-x-1">
-                    <Checkbox
-                      icon={<FavoriteBorder />}
-                      checkedIcon={<Favorite sx={{ color: "red" }} />}
-                      checked={Boolean(article.likedByCurrentUser)}
-                      onChange={() => handleLike(article.sNo)}
-                    />
-                    <span>{article.likes}</span>
-                  </div>
-
-                  {/* Unlike */}
-                  <div className="flex items-center space-x-1 text-gray-600">
-                    <Checkbox
-                      icon={<ThumbDownIcon />}
-                      checkedIcon={<ThumbDownIcon sx={{ color: "blue" }} />}
-                      checked={Boolean(article.unLikedByCurrentUser)}
-                      onChange={() => handleUnLike(article.sNo)}
-                    />
-                    <span>{article.unLikes}</span>
-                  </div>
-
-                  {/* Views */}
-                  <div className="flex items-center space-x-1 text-gray-600">
-                    <VisibilityIcon fontSize="small" />
-                    <span>{article.views}</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           ))
         ) : (
           <div className="text-center text-gray-500 mt-10">

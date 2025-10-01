@@ -28,3 +28,18 @@ export const unlikeOnClick = async (id) => {
     }
   );
 };
+
+export const ReportNews = async(id,reportContent,otherText)=>{
+  //  const formData = new FormData()
+  //     formData.append("reportContent",JSON.stringify(reportContent))
+  //     formData.append("reportContent",)
+
+  return axiosInstance.post(`${baseURL}/news/${id}/report`,{
+    reportContent 
+    // reportContent : otherText
+  },{
+    headers:{
+      Authorization :"Bearer"+ localStorage.getItem("accessToken")
+    }
+  })
+}
