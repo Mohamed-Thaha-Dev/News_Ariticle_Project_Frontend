@@ -172,6 +172,7 @@
 
 // src/api/axiosInstance.js
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const baseURL = "http://localhost:8080"; // change to your backend URL
 
@@ -210,7 +211,20 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
     const status = error.response?.status;
 
-    console.log("Response Status:", status, "Data:", error.response?.data);
+     const backendMessage = error.response?.data.message;
+
+    //🔥 Global toast for errors
+    if (status === 401 || status === 403) {
+      toast.error(backendMessage,{
+        position: "top-right",
+      },);
+    } else {
+      toast.error(backendMessage, {
+        position: "top-right",
+      });
+    }
+
+    console.log("Response Status:", status, "Data:", error.response.data.message);
 
     // If 401/403 and request not retried
     if ((status === 401 || status === 403) && !originalRequest._retry) {
@@ -246,7 +260,7 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         localStorage.removeItem("accessToken");
-        window.location.href = "/login";
+        // window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

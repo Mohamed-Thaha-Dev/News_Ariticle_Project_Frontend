@@ -399,11 +399,18 @@ export default function Register() {
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword?.message}
             />
-
+           <Box display="flex" alignItems="center" justifyContent="end" gap={1}>
+                       <input
+                         type="checkbox"
+                         name="termsAccepted"
+                         required
+                       />
+                       <Link to={"/privacy_policy"} className="hover:underline">Privacy Policy</Link>
+                     </Box>
             <Button
               fullWidth
               variant="contained"
-              sx={{ mt: 2, py: 1.2, borderRadius: 2 }}
+              sx={{ py: 1.2, borderRadius: 2 }}
               type="submit"
               disabled={submitLoading}
             >

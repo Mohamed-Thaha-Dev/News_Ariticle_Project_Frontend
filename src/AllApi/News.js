@@ -13,6 +13,7 @@ const News = () => {
 
 const token = localStorage.getItem("accessToken");
 const headers = token ? { Authorization: `Bearer ${token}` } : {};
+const accessToken = token ? axiosInstance : axios ;
 
 
   useEffect(() => {
@@ -24,7 +25,7 @@ const headers = token ? { Authorization: `Bearer ${token}` } : {};
         //     "Content-Type": "multipart/form-data",
         //     Authorization: "Bearer " + localStorage.getItem("accessToken"), // or sessionStorage
         //   }})
-        const response = await axios.get(`${baseURL}/news/home`);
+        const response = await accessToken.get(`${baseURL}/news/home`,{},{headers});
         console.log(response.data)
         setMessage(response.data.message);
         if (response.data.data && Array.isArray(response.data.data)) {

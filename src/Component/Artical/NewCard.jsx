@@ -89,23 +89,29 @@ const NewsCard = () => {
             : a
         )
       );
-      toast.success(response.data, {
-        position: "top-right",
-      });
+
+      // toast.success(response.data, {
+      //   position: "top-right",
+      // });
       console.log("Like toggled  in NewsCard:", response.data);
       // TODO: update state so UI shows updated likes count
     } catch (err) {
-      console.log(err);
-      if (err.response?.status === 403 || err.response?.status === 401) {
+      if(err.status === 401 || err.status === 403){
         setTimeout(() => {
-          navigate("/login");
-        }, 5000);
+          navigate("/login")
+        },5000);
       }
-      toast.error(err.response?.data?.message, {
-        position: "top-right",
-      });
+      console.log(err);
+      // if (err.response?.status === 403 || err.response?.status === 401) {
+      //   setTimeout(() => {
+      //     navigate("/login");
+      //   }, 5000);
+      // }
+      // toast.error(err.response?.data, {
+      //   position: "top-right",
+      // });
       console.error("Like error:", err);
-      console.log(err.response.data?.message);
+      console.log(err.response.data);
     }
     console.log(article.sNo);
   };
@@ -130,27 +136,31 @@ const NewsCard = () => {
                 ...a,
                 unLikes: response.data.totalUnLikes,
                 unLikedByCurrentUser: response.data.unLikedByCurrentUser,
-
               }
             : a
         )
       );
-      toast.success(response.data, {
-        position: "top-right",
-      });
+      // toast.success(response.data, {
+      //   position: "top-right",
+      // });
       console.log("unLike toggled  in NewsCard:", response.data);
       // TODO: update state so UI shows updated likes count
     } catch (err) {
       console.log(err);
-      if (err.response?.status === 403 || err.response?.status === 401) {
+       if(err.status === 401 || err.status === 403){
         setTimeout(() => {
-          navigate("/login");
-        }, 5000);
+          navigate("/login")
+        },5000);
       }
-      toast.error(err.response?.data?.message, {
-        position: "top-right",
-      });
-      console.error("Like error:", err);
+      // if (err.response?.status === 403 || err.response?.status === 401) {
+      //   setTimeout(() => {
+      //     navigate("/login");
+      //   }, 5000);
+      // }
+      // toast.error(err.message, {
+      //   position: "top-right",
+      // });
+      console.error("Like error:", err.response.message);
       console.log(err.response.data?.message);
     }
     console.log(article.sNo);
@@ -160,14 +170,12 @@ const NewsCard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-20 md:mt-25 items-stretch">
         {Array.isArray(articles) && articles.length > 0 ? (
           articles.map((article, index) => (
-           
-  <NewsItem
-    key={article.sNo}
-    article={article}
-    handleLike={handleLike}
-    handleUnLike={handleUnLike}
-  />
-
+            <NewsItem
+              key={article.sNo}
+              article={article}
+              handleLike={handleLike}
+              handleUnLike={handleUnLike}
+            />
           ))
         ) : (
           <div className="text-center text-gray-500 mt-10">
@@ -194,7 +202,7 @@ const NewsCard = () => {
       )}
       <ToastContainer
         position="top-center"
-        autoClose={3000}
+        autoClose={4000}
         hideProgressBar={false}
         newestOnTop={true}
         closeOnClick

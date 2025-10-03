@@ -108,6 +108,7 @@ const AllNews = () => {
             : a
         )
       );
+      console.log(response)
       toast.success(response.data, {
         position: "top-right",
       });
@@ -153,18 +154,18 @@ const AllNews = () => {
             : a
         )
       );
-      toast.success(response.data, {
+      toast.success(response.message, {
         position: "top-right",
       });
       console.log("Like toggled AllNews:", response.data);
       // TODO: update state so UI shows updated likes count
     } catch (err) {
       console.log(err);
-      // if (err.response?.status === 403 || err.response?.status === 401) {
-      //   setTimeout(() => {
-      //     navigate("/login");
-      //   }, 5000);
-      // }
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        setTimeout(() => {
+          navigate("/login");
+        }, 5000);
+      }
       toast.error(err.response?.data?.message, {
         position: "top-right",
       });
@@ -239,7 +240,7 @@ const AllNews = () => {
           ))
         ) : (
           <div className="text-center text-gray-500 mt-10">
-            {allNewMessage || "No news available 😔"}
+            {allNewMessage && "Loading....." || "No news available 😔"}
           </div>
         )}
 

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { baseURL } from "./AuthApi";
 import axiosInstance from "../Features/LoginPage/userLoginToken";
+import { toast } from "react-toastify";
 
 const allNewsPage = ()=>{
   const [allNews, setAllNews] = useState([]);
@@ -31,7 +32,8 @@ const allNewsPage = ()=>{
 
       } catch (err) {
         console.error("API Error:", err.response.data);
-        setAllNewsError(err.response?.data?.message || err.message || "Something went wrong");
+
+        setAllNewsError(err.response.data || err.message || "Something went wrong");
       } finally {
         setAllNewsIsLoading(false);
       }

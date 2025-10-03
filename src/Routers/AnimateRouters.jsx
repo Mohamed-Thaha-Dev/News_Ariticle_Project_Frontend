@@ -24,6 +24,9 @@ import AllNews from "../Pages/News/AllNewsPage.jsx";
 import AllNewsPage from "../Pages/News/AllNewsPage.jsx";
 import UserLogin from "../Pages/LoginPages/UserLogin.jsx";
 import { RegisterPage } from "../Pages/RegisterPage/RegisterPage.jsx";
+import UserProfilePage from "../Pages/UserAccountPage/UserAccountPage.jsx";
+import TermsAndConditions from "../Pages/PrivacyPolicyAndTerms/TermsAndConditions.jsx";
+import PrivacyPolicy from "../Pages/PrivacyPolicyAndTerms/PrivacyPolicy.jsx";
 
 const AnimateRouters = () => {
   const location = useLocation();
@@ -138,6 +141,45 @@ const AnimateRouters = () => {
                   transition={{ duration: 0.4 }}
                 >
                   <UploadPage/>
+                </motion.div>
+              }
+            />
+            <Route
+              path="/userAccount"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <UserProfilePage/>
+                </motion.div>
+              }
+            />
+            <Route
+              path="/terms_and_conditions"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.4 }}
+                >
+                 <TermsAndConditions/>
+                </motion.div>
+              }
+            />
+            <Route
+              path="/privacy_policy"
+              element={
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.4 }}
+                >
+                 <PrivacyPolicy/>
                 </motion.div>
               }
             />

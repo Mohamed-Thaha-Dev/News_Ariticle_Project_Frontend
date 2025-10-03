@@ -14,5 +14,5 @@ export let LoginValidation = Yup.object().shape({
       }
     ),
 
-   password: Yup.string().required("Password is required / கடவுச்சொல் கட்டாயம்").min(6,"Enter Valid Password")
+   password: Yup.string().required("Password is required / கடவுச்சொல் கட்டாயம்").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/,"Password is invalid. It must contain uppercase, lowercase, number, special char,(e.g. A1234@b)"),
 })

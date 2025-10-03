@@ -21,6 +21,7 @@ import {
   Avatar,
   Typography,
   Grid,
+  Tooltip,
 } from "@mui/material";
 import { blue, red } from "@mui/material/colors";
 
@@ -38,18 +39,6 @@ const NewsItem = ({ article, handleLike, handleUnLike }) => {
   // const handleMenuClose = () => {
   //   setAnchor(null);
   // };
-
-  const handleReport = async (id) => {
-    try {
-      const response = await ReportNews(id);
-      console.log(response);
-    } catch (err) {
-      console.log(err.response);
-    }
-
-    // call the delete function from props
-    // handleMenuClose();
-  };
   const handelGetDetalis = () => {};
 
   return (
@@ -62,22 +51,36 @@ const NewsItem = ({ article, handleLike, handleUnLike }) => {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {/* ✅ Header */}
-        <CardHeader
-        sx={{bgcolor:blue[200]}}
-          avatar={
-            <Avatar
-              sx={{ bgcolor: red[500],placeItems:"center"}}
-              src={article.authorProfileUrl || ""}
-              alt={article.authorName}
-            >
-              
-              {!article.authorProfileUrl &&
-                (article.authorName !== null? article.authorName[0].toUpperCase(): "U")}
-            </Avatar>
-          }
-          title={article.authorName.toUpperCase() || "Unknown User"}
-          subheader={article.updatedAt.substring(0,10) || "Just now"}
-        />
+    <CardHeader
+  sx={{ bgcolor: blue[200] }}
+  avatar={
+    <Tooltip
+      title={
+        <div>
+          <strong>{article.authorName || "Unknown User"}</strong>
+          <br />
+          <span>{article.authorEmail || "No Email"}</span>
+        </div>
+      }
+      arrow
+      placement="bottom"
+    >
+      <Avatar
+        sx={{ bgcolor: red[500], placeItems: "center", cursor: "pointer" }}
+        src={article.authorProfileUrl || ""}
+        alt={article.authorName}
+      >
+        {!article.authorProfileUrl &&
+          (article.authorName
+            ? article.authorName[0].toUpperCase()
+            : "U")}
+      </Avatar>
+    </Tooltip>
+  }
+  title={article.authorName?.toUpperCase() || "Unknown User"}
+  subheader={article.updatedAt?.substring(0, 10) || "Just now"}
+/>
+
       {/* Top-right 3-dot menu */}
       {/* Report menu button */}
       <ReportMenu article={article} />

@@ -15,7 +15,10 @@ const SideBannerRegister = () => {
               <h2 className="text-3xl font-bold mt-6">Welcome Back</h2>
               <h3 className="text-2xl font-semibold">Ilayankudi News</h3>
               <p className="mt-3 text-center text-gray-200 max-w-md">
-                Your daily dose of trusted news, just a login away.
+                Your daily dose of trusted news sign up and stay updated.
+              </p>
+              <p className="mt-3 text-center text-gray-200 max-w-md">
+                Sign up today and personalize your trusted news feed.
               </p>
               
             </div>

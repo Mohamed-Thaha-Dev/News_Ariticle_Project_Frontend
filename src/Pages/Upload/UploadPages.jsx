@@ -105,8 +105,8 @@ const handleChange = (e) => {
       setResetPreview(true); // tell child to clear previews
       setTimeout(() => setResetPreview(false), 0); // reset back
     } catch (err) {
-      console.error("Upload Error:", err);
-      toast.error(err.response.data.message, {
+      console.log("Upload Error:", err);
+      toast.error(err.response, {
         position: "top-right",
       });
 
@@ -202,8 +202,9 @@ const handleChange = (e) => {
               name="termsAccepted"
               checked={uploadData.termsAccepted}
               onChange={handleChange}
+              required
             />
-            <Link>Terms & Condition</Link>
+            <Link to={"/terms_and_conditions"}>Terms & Condition</Link>
           </Box>
         </div>
 

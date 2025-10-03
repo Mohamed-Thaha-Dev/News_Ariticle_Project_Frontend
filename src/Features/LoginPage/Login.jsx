@@ -86,7 +86,7 @@ const LoginPage = ()=> {
       },2000);
     } catch (err) {
       console.log("err", err);
-      console.log("errror message", err.response);
+      console.log("errror message", err.response.data);
       console.log(err.response || "Something went wrong ❌");
       toast.error(err.response?.data || "Something went wrong ❌", {
         position: "top-right",

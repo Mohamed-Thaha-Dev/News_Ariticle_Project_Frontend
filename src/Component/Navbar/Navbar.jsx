@@ -44,7 +44,7 @@ const Navbar = () => {
     Notifications
   </Link>
   <Link 
-    to="/restaurant" 
+    to="/userAccount" 
     className="px-3 py-2 rounded hover:bg-blue-600 hover:text-white transition-all duration-300"
   >
     Account
